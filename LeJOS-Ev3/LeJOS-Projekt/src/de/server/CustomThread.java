@@ -32,7 +32,7 @@ public class CustomThread extends Thread
         motor.forward();
     	gyroProvider.fetchSample(gyroSample, 0);
     	gyroProvider.fetchSample(tempSample, 0);
-    	while ((tempSample[0] - gyroSample[0])*(tempSample[0] - gyroSample[0]) < angel-2*angel-2) 
+    	while ((tempSample[0] - gyroSample[0])*(tempSample[0] - gyroSample[0]) < (angel-2)*(angel-2)) 
     	{
     		gyroProvider.fetchSample(tempSample, 0); 	
     	}

@@ -26,7 +26,7 @@ public class Interface implements ActionListener {
 	DataOutputStream output;
 
 	JPanel panel = new JPanel();
-	JFrame frame = new JFrame("inputManag");
+	JFrame frame = new JFrame("Remote Control");
 	JButton b_p1 = new JButton("Play 1");
 	JButton b_p2 = new JButton("Play 2"); 
 	JButton b_enter = new JButton("Enter"); 
