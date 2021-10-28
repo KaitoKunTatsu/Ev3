@@ -1,14 +1,18 @@
 package de.RemoteControl;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URI;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,6 +22,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import com.sun.jndi.toolkit.url.Uri;
+
+import sun.awt.datatransfer.DesktopDatatransferServiceImpl;
 
 public class Interface implements ActionListener {
 	
@@ -64,6 +72,7 @@ public class Interface implements ActionListener {
 		frame.setResizable(false);
 		
 		exit.addActionListener(this);
+		about.addActionListener(this);
 		file.insert(exit, 0);
 		help.insert(about,0);
 		bar.add(file);
@@ -100,7 +109,8 @@ public class Interface implements ActionListener {
 		b_enter.addActionListener(this);
 		connect.addActionListener(this);
 		b_delete.addActionListener(this);
-		
+
+		panel.setBorder(BorderFactory.createEmptyBorder(35,35,35,35));
 		frame.add(panel);
 		frame.setLocationRelativeTo(null);;
 		frame.pack();
@@ -113,6 +123,23 @@ public class Interface implements ActionListener {
 			if (e.getSource() == exit) 
 			{
 				System.exit(0);
+			}
+			else if (e.getSource() == about) 
+			{
+				Desktop desk = java.awt.Desktop.getDesktop();
+				try {
+					URI kUri = new URI("https://github.com/KaitoKunTatsu");
+					desk.browse(kUri);
+					URI cUri = new URI("https://github.com/MConfuse");
+					desk.browse(cUri);
+					URI sUri = new URI("https://github.com/SladeVG");
+					desk.browse(sUri);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(frame, "https://github.com/KaitoKunTatsu\nhttps://github.com/MConfuse\nhttps://github.com/SladeVG", "Author", JOptionPane.INFORMATION_MESSAGE);
+					e1.printStackTrace();
+				}
+				return;
 			}
 			try {
 				if (output != null) {	

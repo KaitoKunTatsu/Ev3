@@ -21,7 +21,7 @@ public class Server {
 	try 
 	{
 		server = new ServerSocket(port);
-		server.setSoTimeout(20000);
+		server.setSoTimeout(200000);
 	} 
 	catch (Exception e) { e.printStackTrace();}
 	
