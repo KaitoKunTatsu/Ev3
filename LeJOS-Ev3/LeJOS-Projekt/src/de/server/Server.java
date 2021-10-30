@@ -15,7 +15,8 @@ public class Server {
 	DataInputStream input;
 	Socket client;
 	
-	public Server(int pPort) 
+	 // Erstellen eines Servers auf dem EV3, um Inputs des interface zu erhalten
+	public Server(int pPort)
 	{
 	port = pPort;
 	try 

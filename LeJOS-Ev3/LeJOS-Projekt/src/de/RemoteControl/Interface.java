@@ -65,12 +65,14 @@ public class Interface implements ActionListener {
 	
 	public Interface() 
 	{
+		// Einstellungen des Fensters
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setBackground(Color.darkGray);
 		frame.setTitle("Remote Controle");
 		frame.setResizable(false);
 		
+		// Menuebar erstellen
 		exit.addActionListener(this);
 		about.addActionListener(this);
 		file.insert(exit, 0);
@@ -81,6 +83,7 @@ public class Interface implements ActionListener {
 		
 		panel.setLayout(new GridLayout(5,3,10, 10));
 		
+		// buttons zum panel hinzufügen
 		panel.add(connect);
 		panel.add(ip_field);
 		panel.add(status);
@@ -97,8 +100,11 @@ public class Interface implements ActionListener {
 		panel.add(b_sRec);
 		panel.add(angel_field);
 		
-		b_p1.addActionListener(this);
+		// Größe der buttons 
 		b_p1.setPreferredSize(new Dimension(50,60));
+		
+		// Druck der buttons auf override der Klasse verweisen 
+		b_p1.addActionListener(this);
 		b_p2.addActionListener(this);
 		b_left.addActionListener(this);
 		b_right.addActionListener(this);
@@ -109,7 +115,9 @@ public class Interface implements ActionListener {
 		b_enter.addActionListener(this);
 		connect.addActionListener(this);
 		b_delete.addActionListener(this);
+		b_sRec.addActionListener(this);
 
+		
 		panel.setBorder(BorderFactory.createEmptyBorder(35,35,35,35));
 		frame.add(panel);
 		frame.setLocationRelativeTo(null);;
@@ -124,6 +132,7 @@ public class Interface implements ActionListener {
 			{
 				System.exit(0);
 			}
+			// Verlinkt zu den Githubs der Autoren
 			else if (e.getSource() == about) 
 			{
 				Desktop desk = java.awt.Desktop.getDesktop();
@@ -142,6 +151,7 @@ public class Interface implements ActionListener {
 				return;
 			}
 			try {
+				// Knopfdrücke auf die Variable "curB" übertragen
 				if (output != null) {	
 					if (e.getSource() == b_enter) 
 					{
@@ -188,26 +198,31 @@ public class Interface implements ActionListener {
 						curB = "STOPREC";
 					}
 				}
+				
+			// Ist "connect" gedrückt und der NICHT EV3 verbunden, wird dieser verbunden und der outputstream initalisiert
 			if (e.getSource() == connect && client == null) 
 			{
 				client = new Socket(ip_field.getText(), 1415);
 				status.setText("Status: connected");
-				input = new DataInputStream(client.getInputStream());
 				output = new DataOutputStream(client.getOutputStream());
 				return;
 			}
+			// Kann die Eingabe für die Rotation zu int konvertiert werden, überspringen
 			try 
 			{
 				Integer.parseInt(angel_field.getText());
 			}
+			// Sonst eine Fehlermeldung werfen
 			catch(Exception exx) 
 			{
 				JOptionPane.showMessageDialog(frame, "Can not convert angel to int. Please fix your input", "Input Error", JOptionPane.ERROR_MESSAGE); 	
 				return;
 			}
+			// String zum EV3 übertragen, welcher den Input, Zähler an Knopfdrücken und die Gradzahl überträgt
 			output.writeUTF(curB + ";" + Integer.toString(curV) + ";" + Integer.parseInt(angel_field.getText()));
 			curV++;
 			} 
+			// Fehler beim übertragen als Fehlermeldung werfen
 			catch(Exception ex) 
 			{ 
 				JOptionPane.showMessageDialog(frame, "Connection lost", "Connection Error", JOptionPane.ERROR_MESSAGE); 
