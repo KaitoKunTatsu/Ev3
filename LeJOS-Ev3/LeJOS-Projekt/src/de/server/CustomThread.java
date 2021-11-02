@@ -14,6 +14,7 @@ public class CustomThread extends Thread
 	
 	int counter = 1, angel;
 	String button;
+	ArrayUtils arrUt = new ArrayUtils();
     EV3LargeRegulatedMotor motorA = new EV3LargeRegulatedMotor(MotorPort.A);
     EV3LargeRegulatedMotor motorB = new EV3LargeRegulatedMotor(MotorPort.B);    
     boolean recording = false;
@@ -28,10 +29,10 @@ public class CustomThread extends Thread
     float[] gyroSample = new float[gyroProvider.sampleSize()];
     float[] tempSample = new float[gyroProvider.sampleSize()];
     
-    // Methode zur Rotation in entgegengesetzte Richtung zum übergebenen Motor
+    // Methode zur Rotation in entgegengesetzte Richtung zum Ã¼bergebenen Motor
     public void rotate(RegulatedMotor motor, boolean back) 
     {
-    	// Start des übergebenen Motors
+    	// Start des Ã¼bergebenen Motors
     	motor.setSpeed(300);
     	if (!back) { motor.forward(); }
     	else { motor.backward(); }
@@ -39,7 +40,7 @@ public class CustomThread extends Thread
         // Gyro Messung vor der Drehung
     	gyroProvider.fetchSample(gyroSample, 0);
     	gyroProvider.fetchSample(tempSample, 0);
-    	// Wiederholung bis "angel" 90° von der Messung zuvor entfernt ist
+    	// Wiederholung bis "angel" 90Â° von der Messung zuvor entfernt ist
     	while ((tempSample[0] - gyroSample[0])*(tempSample[0] - gyroSample[0]) < (angel)*(angel)) 
     	{
     		gyroProvider.fetchSample(tempSample, 0); 	
@@ -52,8 +53,8 @@ public class CustomThread extends Thread
     }
     
     
-    // Methode zum ausführen von Bewegungen
-    // move: String = auszuführende Aktion als Text
+    // Methode zum ausfÃ¼hren von Bewegungen
+    // move: String = auszufÃ¼hrende Aktion als Text
     private void movement(String move, boolean back) 
     {
         switch(move) 
@@ -88,7 +89,7 @@ public class CustomThread extends Thread
             motorA.forward();
             motorB.forward();
             break;
-        // rückwärts fahren
+        // rÃ¼ckwÃ¤rts fahren
         case "DOWN":
         	if (back) 
         	{
@@ -109,7 +110,7 @@ public class CustomThread extends Thread
     }
     
     // Methode zum abspielen des aufgenommenen Arrays (movement pattern)
-    // backwards: boolean = Soll das pattern erneut abgespielt oder zurück gefahren werden?
+    // backwards: boolean = Soll das pattern erneut abgespielt oder zurÃ¼ck gefahren werden?
     private void play(boolean backwards) 
     {
     	playing = true;
@@ -128,7 +129,7 @@ public class CustomThread extends Thread
 		        }
 		    } catch (Exception e) {System.out.println("Error");}
 	    }
-    	// wenn die Strecke zurück bis zum Anfangspunkt gefahren werden soll
+    	// wenn die Strecke zurÃ¼ck bis zum Anfangspunkt gefahren werden soll
 	    else 
 	    {
 	    	try 
@@ -138,7 +139,7 @@ public class CustomThread extends Thread
 		        {
 		            if (recArr[i] == "" || recArr[i] == null) continue;
 		            System.out.println("playin... ");
-		            // wenn im nächsten Zyklus geradeaus oder rückwärts gefahren werden soll, zuerst die nächste Aktion ausführen und dann die aktuelle Aktion
+		            // wenn im nÃ¤chsten Zyklus geradeaus oder rÃ¼ckwÃ¤rts gefahren werden soll, zuerst die nÃ¤chste Aktion ausfÃ¼hren und dann die aktuelle Aktion
 		            if (recArr[i-1] == "DOWN" || recArr[i-1] == "UP") 
 		            {
 		            	System.out.println(recTime[i]-recTime[i-1]);
@@ -153,7 +154,7 @@ public class CustomThread extends Thread
 		    } catch (Exception e) {System.out.println("Error");}
 	    }
 		System.out.println("FINISHED");
-        // Variablen zurücksetzen auf den Stand vor der Aufnahme
+        // Variablen zurÃ¼cksetzen auf den Stand vor der Aufnahme
 		recording = false;
         recVal = 0;
         playing = false;
@@ -170,7 +171,7 @@ public class CustomThread extends Thread
         		button = ""; 
         		continue;
         	}
-        	// Kann aus dem Server des EV3 ein neuer Input erkannt werden, wird dieser auf var "button" übertragen
+        	// Kann aus dem Server des EV3 ein neuer Input erkannt werden, wird dieser auf var "button" Ã¼bertragen
         	else 
         	{
         		angel = Integer.parseInt(Server.inputButton.split(";")[2]);
@@ -179,7 +180,7 @@ public class CustomThread extends Thread
         	}
         	System.out.println(Server.inputButton);
             
-        	// Reaktion auf den übergebenen Button
+        	// Reaktion auf den Ã¼bergebenen Button
     		switch(button) 
         	{
     		// Ist button leer, beende switch
@@ -193,7 +194,7 @@ public class CustomThread extends Thread
         	case "ESCAPE":
         		System.exit(0);
         		break;
-        	// Aufnahme löschen
+        	// Aufnahme lÃ¶schen
         	case "DELETE":
                 recArr = new String[20];
                 recTime = new long[20];
@@ -202,7 +203,7 @@ public class CustomThread extends Thread
         	case "REC":
         		recording = true;
         		break;
-        	// Aufnahme rückwärts abspielen
+        	// Aufnahme rÃ¼ckwÃ¤rts abspielen
         	case "PLAY2":
         		play(true);
         		break;
@@ -217,8 +218,8 @@ public class CustomThread extends Thread
     			{	
             		if (recVal > recArr.length-1) 
             		{
-            			recArr = ArrayUtils.addElementToArray(recArr, button);
-            			recTime = ArrayUtils.addElementToArray(recTime, System.currentTimeMillis());
+            			recArr = arrUt.addElementToArray(recArr, button);
+            			recTime = arrUt.addElementToArray(recTime, System.currentTimeMillis());
             		}
             		else 
             		{
@@ -228,7 +229,7 @@ public class CustomThread extends Thread
             		recVal++;
                     System.out.println(button + " recorded");
     			}
-    			// Bewegung ausführen
+    			// Bewegung ausfÃ¼hren
         		movement(button, false);    
         	}
         }
