@@ -11,10 +11,11 @@ import de.KaitoLib.Utils.*;
 
 public class CustomThread extends Thread
 {
+	// Klasse einer eigenen Bibliothek zum Umgang mit Arrays
+	ArrayUtils arrUt = new ArrayUtils();
 	
 	int counter = 1, angel;
 	String button;
-	ArrayUtils arrUt = new ArrayUtils();
     EV3LargeRegulatedMotor motorA = new EV3LargeRegulatedMotor(MotorPort.A);
     EV3LargeRegulatedMotor motorB = new EV3LargeRegulatedMotor(MotorPort.B);    
     boolean recording = false;
@@ -139,14 +140,11 @@ public class CustomThread extends Thread
 		        {
 		            if (recArr[i] == "" || recArr[i] == null) continue;
 		            System.out.println("playin... ");
-		            // wenn im nächsten Zyklus geradeaus oder rückwärts gefahren werden soll, zuerst die nächste Aktion ausführen und dann die aktuelle Aktion
-		            if (recArr[i-1] == "DOWN" || recArr[i-1] == "UP") 
+		            if (recArr[i] == "DOWN" || recArr[i] == "UP") 
 		            {
-		            	System.out.println(recTime[i]-recTime[i-1]);
-		            	movement(recArr[i-1], true);
-		            	Delay.msDelay(recTime[i]-recTime[i-1]);
 		            	movement(recArr[i], true);
-		            	i--;
+		            	Delay.msDelay(recTime[i+1]-recTime[i]);
+		            	movement("ENTER", true);
 		            	continue;
 		            }
 		            movement(recArr[i], true);
@@ -154,7 +152,7 @@ public class CustomThread extends Thread
 		    } catch (Exception e) {System.out.println("Error");}
 	    }
 		System.out.println("FINISHED");
-        // Variablen zurücksetzen auf den Stand vor der Aufnahme
+        // Variablen auf den Stand vor der Aufnahme zurücksetzen 
 		recording = false;
         recVal = 0;
         playing = false;
