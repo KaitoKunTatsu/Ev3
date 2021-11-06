@@ -4,9 +4,11 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3GyroSensor;
+import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
+import sun.management.Sensor;
 import de.KaitoLib.Utils.*;
 
 public class CustomThread extends Thread
@@ -14,20 +16,23 @@ public class CustomThread extends Thread
 	// Klasse einer eigenen Bibliothek zum Umgang mit Arrays
 	ArrayUtils arrUt = new ArrayUtils();
 	
-	int counter = 1, angle;
-	String button;
-    EV3LargeRegulatedMotor motorA = new EV3LargeRegulatedMotor(MotorPort.A);
+	EV3LargeRegulatedMotor motorA = new EV3LargeRegulatedMotor(MotorPort.A);
     EV3LargeRegulatedMotor motorB = new EV3LargeRegulatedMotor(MotorPort.B);    
-    boolean recording = false;
-    int recVal = 0;
-    String[] recArr = new String[10];
-    long[] recTime = new long[10];
-    int[] recAngle = new int[10];
-    // Gyro Sensor + Messung initialisieren
+    EV3TouchSensor ts = new EV3TouchSensor(SensorPort.S2);
+    SampleProvider tsProvider = ts.getTouchMode();
+    float[] tsSample = new float[1];
     EV3GyroSensor gyro = new EV3GyroSensor(SensorPort.S1);
     SampleProvider gyroProvider = gyro.getAngleAndRateMode();
     float[] gyroSample = new float[gyroProvider.sampleSize()];
     float[] tempSample = new float[gyroProvider.sampleSize()];
+    
+	int counter = 1, angle;
+	String button;
+	boolean recording = false;
+    int recVal = 0;
+    String[] recArr = new String[10];
+    long[] recTime = new long[10];
+    int[] recAngle = new int[10];
     
     // Methode zur Rotation in entgegengesetzte Richtung zum übergebenen Motor
     public void rotate(RegulatedMotor motor, boolean back, int angle) 
@@ -109,6 +114,37 @@ public class CustomThread extends Thread
     // backwards: boolean = Soll das pattern erneut abgespielt oder zurück gefahren werden?
     private void play(boolean backwards) 
     {
+//    	try {
+//	    	// wenn die Strecke erneut gefahren werden soll
+//		    if (!backwards) 
+//		    {
+//					// Iteration des aufgenommenen Arrays 
+//		    		for (int i = 0; i < recArr.length; i++) 
+//			        {
+//			            if (recArr[i] == "" || recArr[i] == null) break;
+//			            System.out.println("playin... " + recArr[i]);
+//			            movement(recArr[i], false);
+//			            if ("UP".equals(recArr[i]) || "DOWN".equals(recArr[i])) { Delay.msDelay(recTime[i+1]-recTime[i]);}
+//			        }
+//		    }
+//	    	// wenn die Strecke zurück bis zum Anfangspunkt gefahren werden soll
+//		    else 
+//		    {
+//					// Iteration des aufgenommenen Arrays
+//		    		for (int i = recArr.length-1; i >= 0; i--) 
+//			        {
+//			            if (recArr[i] == "" || recArr[i] == null) continue;
+//			            System.out.println("playin... ");
+//			            if ("UP".equals(recArr[i]) || "DOWN".equals(recArr[i]))
+//			            {
+//			            	movement(recArr[i], true);
+//			            	Delay.msDelay(recTime[i+1]-recTime[i]);
+//			            	continue;
+//			            }
+//			            movement(recArr[i], true);
+//			        }
+//		    		movement("ENTER", true);
+//		    }
 		int c;
 		if (backwards) { c = recArr.length-1; }
 		else { c = 0; }
@@ -141,6 +177,8 @@ public class CustomThread extends Thread
     {
         while(true) 
         {
+        	tsProvider.fetchSample(tsSample, 0);
+        	if (tsSample[0] == 1) movement("ENTER", false, angle);
     		// Entspricht der Input des Servers dem zuvoriegen, überspirnge
     		if (Integer.parseInt(Server.inputButton.split(";")[1]) <= counter) continue;
         	// Kann aus dem Server des EV3 ein neuer Input erkannt werden, wird dieser auf die Variable "button" übertragen
