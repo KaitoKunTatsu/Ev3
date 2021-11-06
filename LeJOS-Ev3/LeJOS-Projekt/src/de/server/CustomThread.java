@@ -48,6 +48,8 @@ public class CustomThread extends Thread
     	// Wiederholung bis der Winkel des EV3 den Wert von "angle" von der Messung zuvor entfernt ist
     	while ((tempSample[0] - gyroSample[0])*(tempSample[0] - gyroSample[0]) < (angle-3)*(angle-3)) 
     	{
+        	tsProvider.fetchSample(tsSample, 0);
+        	if (tsSample[0] == 1) break;
     		gyroProvider.fetchSample(tempSample, 0); 	
     	}
         motor.stop(false);
@@ -114,37 +116,6 @@ public class CustomThread extends Thread
     // backwards: boolean = Soll das pattern erneut abgespielt oder zurück gefahren werden?
     private void play(boolean backwards) 
     {
-//    	try {
-//	    	// wenn die Strecke erneut gefahren werden soll
-//		    if (!backwards) 
-//		    {
-//					// Iteration des aufgenommenen Arrays 
-//		    		for (int i = 0; i < recArr.length; i++) 
-//			        {
-//			            if (recArr[i] == "" || recArr[i] == null) break;
-//			            System.out.println("playin... " + recArr[i]);
-//			            movement(recArr[i], false);
-//			            if ("UP".equals(recArr[i]) || "DOWN".equals(recArr[i])) { Delay.msDelay(recTime[i+1]-recTime[i]);}
-//			        }
-//		    }
-//	    	// wenn die Strecke zurück bis zum Anfangspunkt gefahren werden soll
-//		    else 
-//		    {
-//					// Iteration des aufgenommenen Arrays
-//		    		for (int i = recArr.length-1; i >= 0; i--) 
-//			        {
-//			            if (recArr[i] == "" || recArr[i] == null) continue;
-//			            System.out.println("playin... ");
-//			            if ("UP".equals(recArr[i]) || "DOWN".equals(recArr[i]))
-//			            {
-//			            	movement(recArr[i], true);
-//			            	Delay.msDelay(recTime[i+1]-recTime[i]);
-//			            	continue;
-//			            }
-//			            movement(recArr[i], true);
-//			        }
-//		    		movement("ENTER", true);
-//		    }
 		int c;
 		if (backwards) { c = recArr.length-1; }
 		else { c = 0; }
@@ -152,7 +123,9 @@ public class CustomThread extends Thread
 		try {
 		    while(c >= 0 && c < recArr.length) 
 		    {
-		    	if (backwards) 
+		    	tsProvider.fetchSample(tsSample, 0);
+	        	if (tsSample[0] == 1) break; 
+	        	if (backwards) 
 			    { 
 			    	if (recArr[c] != null) movement(recArr[c], true, recAngle[c]); 
 			    	if ("UP".equals(recArr[c]) || "DOWN".equals(recArr[c])) { Delay.msDelay(recTime[c+1]-recTime[c]); }
@@ -163,7 +136,8 @@ public class CustomThread extends Thread
 			    	if (recArr[c] != null) movement(recArr[c], false, recAngle[c]);
 			    	if ("UP".equals(recArr[c]) || "DOWN".equals(recArr[c])) { Delay.msDelay(recTime[c+1]-recTime[c]); }
 			    	c++;
-			    }       	
+			    }
+		    	
 		    }
     	} 
     	catch (Exception e) { System.out.println("Error"); }
