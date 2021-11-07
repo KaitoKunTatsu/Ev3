@@ -3,12 +3,12 @@ package de.RemoteControl;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URI;
 
@@ -21,11 +21,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
-
-import com.sun.jndi.toolkit.url.Uri;
-
-import sun.awt.datatransfer.DesktopDatatransferServiceImpl;
 
 public class Interface implements ActionListener {
 	
@@ -35,73 +32,118 @@ public class Interface implements ActionListener {
 
 	JPanel panel = new JPanel();
 	JFrame frame = new JFrame("Remote Control");
-	JButton b_p1 = new JButton("Play 1");
-	JButton b_p2 = new JButton("Play 2"); 
-	JButton b_enter = new JButton("Enter"); 
-	JButton b_up = new JButton("Up"); 
-	JButton b_down = new JButton("Down"); 
-	JButton b_right = new JButton("Right"); 
-	JButton b_left = new JButton("Left"); 
-	JButton b_record = new JButton("Record");
+	JButton b_p1 = new JButton("‚ñ∂Ô∏è");
+	JButton b_p2 = new JButton("‚Ü∫"); 
+	JButton b_enter = new JButton("‚úñ"); 
+	JButton b_up = new JButton("‚Üë"); 
+	JButton b_down = new JButton("‚Üì"); 
+	JButton b_right = new JButton("‚Üí"); 
+	JButton b_left = new JButton("‚Üê"); 
+	JButton b_record = new JButton("‚è∫Ô∏è");
 	JButton b_esc = new JButton("Escape");	
 	JButton connect = new JButton("Connect");
 	JButton b_delete = new JButton("Delete");
-	JButton b_sRec = new JButton("Stop Rec");
+	JButton b_sRec = new JButton("‚è∏Ô∏è");
+	JTextArea filler = new JTextArea();
 	
 	JLabel status = new JLabel("Status: unconnected");
+	JLabel angleTxt = new JLabel("Rotate Angle");
 	JTextField ip_field = new JTextField("192.168.0.131",20);
-	JTextField angel_field = new JTextField("90", 20);
+	JTextField angle_field = new JTextField("90", 20);
 	
 	JMenuBar bar = new JMenuBar();
 	JMenu help = new JMenu("Help");
-	JMenu file = new JMenu("File");
+	JMenu file = new JMenu("Config");
 	JMenuItem about = new JMenuItem("About");
+	JMenuItem con = new JMenuItem("Connect");
 	JMenuItem exit = new JMenuItem("Exit");
-	
+	JMenuItem darkmode = new JMenuItem("Dark Mode");	
+	JMenuItem lightmode = new JMenuItem("Light Mode");	
 	JPanel error = new JPanel();
+	JPanel conWindow = new JPanel();
+	
+	JPanel panelManager = new JPanel();
+	
+	Font font = new Font(Font.SANS_SERIF, Font.BOLD, 15); 
 	
 	int curV = 0;
 	String curB = "0";
+	boolean connect_window;
 	
 	public Interface() 
 	{
+		
 		// Einstellungen des Fensters
+		frame.setBackground(Color.BLACK);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setBackground(Color.darkGray);
 		frame.setTitle("Remote Controle");
+		frame.setPreferredSize(new Dimension(500,500));
 		frame.setResizable(false);
+		
 		
 		// Menuebar erstellen
 		exit.addActionListener(this);
+		darkmode.addActionListener(this);
+		lightmode.addActionListener(this);
 		about.addActionListener(this);
+		con.addActionListener(this);
 		file.insert(exit, 0);
+		file.insert(darkmode, 1);
+		file.insert(lightmode, 2);
+		file.insert(con, 3);
 		help.insert(about,0);
 		bar.add(file);
 		bar.add(help);
 		frame.setJMenuBar(bar);
 		
-		panel.setLayout(new GridLayout(5,3,10, 10));
-		
-		// buttons zum panel hinzuf¸gen
-		panel.add(connect);
-		panel.add(ip_field);
-		panel.add(status);
-		panel.add(b_p1);
+		panel.setLayout(new GridLayout(6,3,10, 10));
+		conWindow.setLayout(new GridLayout(6,3,10, 10));
+		// buttons zum panel hinzuf√ºgen
+		conWindow.add(connect);
+		conWindow.add(ip_field);
+		conWindow.add(status);
+		conWindow.add(angleTxt);
+		conWindow.add(angle_field);
+		panel.add(new JTextArea()).setVisible(false);;
 		panel.add(b_up);
-		panel.add(b_p2);
+		panel.add(new JTextArea()).setVisible(false);;
 		panel.add(b_left);
 		panel.add(b_enter);
 		panel.add(b_right);
-		panel.add(b_record);
+		panel.add(new JTextArea()).setVisible(false);
 		panel.add(b_down);
-		panel.add(b_esc);
-		panel.add(b_delete);
+		panel.add(new JTextArea()).setVisible(false);;
+		panel.add(new JTextArea()).setVisible(false);;
+		panel.add(new JTextArea()).setVisible(false);;
+		panel.add(new JTextArea()).setVisible(false);;
+		panel.add(b_p1);
 		panel.add(b_sRec);
-		panel.add(angel_field);
+		panel.add(b_record);
+		panel.add(b_p2);
+		panel.add(b_delete);
+		panel.add(b_esc);
 		
-		// Grˆﬂe der buttons 
+		// Gr√∂√üe der buttons 
 		b_p1.setPreferredSize(new Dimension(50,60));
+		b_p1.setFont(font);
+		b_p2.setFont(font);
+		b_enter.setFont(font);
+		b_down.setFont(font);
+		b_right.setFont(font);
+		b_left.setFont(font);
+		b_esc.setFont(font);
+		b_delete.setFont(font);
+		b_record.setFont(font);
+		b_sRec.setFont(font);
+		b_up.setFont(font);
+		connect.setFont(font);
+		status.setFont(font);
+		angle_field.setFont(font);
+		angleTxt.setFont(font);
+		
+		changeColor(Color.ORANGE, Color.WHITE);
 		
 		// Druck der buttons auf override der Klasse verweisen 
 		b_p1.addActionListener(this);
@@ -116,15 +158,35 @@ public class Interface implements ActionListener {
 		connect.addActionListener(this);
 		b_delete.addActionListener(this);
 		b_sRec.addActionListener(this);
-
 		
+		panelManager.setLayout(new GridLayout(1,2));
+		panelManager.add(panel);
 		panel.setBorder(BorderFactory.createEmptyBorder(35,35,35,35));
-		frame.add(panel);
+		conWindow.setBorder(BorderFactory.createEmptyBorder(35,35,35,35));
+		frame.add(panelManager);
 		frame.setLocationRelativeTo(null);;
 		frame.pack();
 		
 	}
-
+	private void changeColor(Color background, Color panelBack) 
+	{
+		panel.setBackground(background);
+		b_p1.setBackground(background);
+		b_p2.setBackground(background);
+		b_enter.setBackground(background);
+		b_down.setBackground(background);
+		b_left.setBackground(background);
+		b_right.setBackground(background);
+		b_up.setBackground(background);
+		b_delete.setBackground(background);
+		b_record.setBackground(background);
+		b_sRec.setBackground(background);
+		connect.setBackground(background);
+		b_esc.setBackground(background);
+		
+		conWindow.setBackground(panelBack);
+		panel.setBackground(panelBack);
+	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {		
@@ -150,8 +212,41 @@ public class Interface implements ActionListener {
 				}
 				return;
 			}
+			if (e.getSource() == darkmode) 
+			{
+				changeColor(Color.lightGray, Color.DARK_GRAY);
+				status.setForeground(Color.WHITE);
+				return;
+			}
+			if (e.getSource() == lightmode) 
+			{
+				changeColor(Color.ORANGE, Color.WHITE);
+				status.setForeground(Color.black);
+				return;
+			}
+
+			if (e.getSource() == con) 
+			{
+				if (!connect_window) {
+					panelManager.add(conWindow);
+					panelManager.updateUI();
+					connect_window = true;
+					frame.setPreferredSize(new Dimension(800,500));
+					frame.pack();
+				}
+				else  
+				{
+					panelManager.remove(conWindow);
+					panelManager.updateUI();
+					connect_window = false;
+					frame.setPreferredSize(new Dimension(500,500));
+					frame.pack();
+				}
+				return;
+			}
+			
 			try {
-				// Knopfdr¸cke auf die Variable "curB" ¸bertragen
+				// Knopfdr√ºcke auf die Variable "curB" √ºbertragen
 				if (output != null) {	
 					if (e.getSource() == b_enter) 
 					{
@@ -199,7 +294,7 @@ public class Interface implements ActionListener {
 					}
 				}
 				
-			// Ist "connect" gedr¸ckt und der NICHT EV3 verbunden, wird dieser verbunden und der outputstream initalisiert
+			// Ist "connect" gedr√ºckt und der EV3 NICHT verbunden, wird dieser verbunden und der outputstream initalisiert
 			if (e.getSource() == connect && client == null) 
 			{
 				client = new Socket(ip_field.getText(), 1415);
@@ -207,10 +302,10 @@ public class Interface implements ActionListener {
 				output = new DataOutputStream(client.getOutputStream());
 				return;
 			}
-			// Kann die Eingabe f¸r die Rotation zu int konvertiert werden, ¸berspringen
+			// Kann die Eingabe f√ºr die Rotation zu int konvertiert werden, fortsetzen
 			try 
 			{
-				Integer.parseInt(angel_field.getText());
+				Integer.parseInt(angle_field.getText());
 			}
 			// Sonst eine Fehlermeldung werfen
 			catch(Exception exx) 
@@ -218,11 +313,11 @@ public class Interface implements ActionListener {
 				JOptionPane.showMessageDialog(frame, "Can not convert angel to int. Please fix your input", "Input Error", JOptionPane.ERROR_MESSAGE); 	
 				return;
 			}
-			// String zum EV3 ¸bertragen, welcher den Input, Z‰hler an Knopfdr¸cken und die Gradzahl ¸bertr‰gt
-			output.writeUTF(curB + ";" + Integer.toString(curV) + ";" + Integer.parseInt(angel_field.getText()));
+			// String zum EV3 √ºbertragen, welcher den Input, Z√§hler an Knopfdr√ºcken und die Gradzahl √ºbertr√§gt
+			output.writeUTF(curB + ";" + Integer.toString(curV) + ";" + Integer.parseInt(angle_field.getText()));
 			curV++;
 			} 
-			// Fehler beim ¸bertragen als Fehlermeldung werfen
+			// Fehler beim √ºbertragen als Fehlermeldung werfen
 			catch(Exception ex) 
 			{ 
 				JOptionPane.showMessageDialog(frame, "Connection lost", "Connection Error", JOptionPane.ERROR_MESSAGE); 
