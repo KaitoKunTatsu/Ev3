@@ -38,7 +38,7 @@ public class CustomThread extends Thread
     public void rotate(RegulatedMotor motor, boolean back, int angle) 
     {
     	// Start des übergebenen Motors
-    	motor.setSpeed(300);
+    	motor.setSpeed(340);
     	if (!back) { motor.forward(); }
     	else { motor.backward(); }
         
@@ -49,7 +49,13 @@ public class CustomThread extends Thread
     	while ((tempSample[0] - gyroSample[0])*(tempSample[0] - gyroSample[0]) < (angle-3)*(angle-3)) 
     	{
         	tsProvider.fetchSample(tsSample, 0);
-        	if (tsSample[0] == 1) break;
+        	if (tsSample[0] == 1) 
+        	{
+        		movement("DOWN", false, angle);
+        		Delay.msDelay(250);
+        		movement("ENTER", false, angle);
+	        	return;
+	        }
     		gyroProvider.fetchSample(tempSample, 0); 	
     	}
         motor.stop(false);
@@ -81,14 +87,14 @@ public class CustomThread extends Thread
         case "UP":
         	if (back) 
         	{
-        		motorA.setSpeed(300);
-                motorB.setSpeed(300);
+        		motorA.setSpeed(340);
+                motorB.setSpeed(340);
                 motorA.backward();
                 motorB.backward();
         		break;
         	}
-            motorA.setSpeed(300);
-            motorB.setSpeed(300);
+            motorA.setSpeed(340);
+            motorB.setSpeed(340);
             motorA.forward();
             motorB.forward();
             break;
@@ -96,14 +102,14 @@ public class CustomThread extends Thread
         case "DOWN":
         	if (back) 
         	{
-                motorA.setSpeed(300);
-                motorB.setSpeed(300);
+                motorA.setSpeed(340);
+                motorB.setSpeed(340);
                 motorA.forward();
                 motorB.forward();
         		break;
         	}
-            motorA.setSpeed(300);
-            motorB.setSpeed(300);
+            motorA.setSpeed(340);
+            motorB.setSpeed(340);
             motorA.backward();
             motorB.backward();
             break;
@@ -124,7 +130,12 @@ public class CustomThread extends Thread
 		    while(c >= 0 && c < recArr.length) 
 		    {
 		    	tsProvider.fetchSample(tsSample, 0);
-	        	if (tsSample[0] == 1) break; 
+		    	if (tsSample[0] == 1) 
+	        	{
+	        		movement("DOWN", false, angle);
+	        		Delay.msDelay(250);
+	        		break;
+	        	}
 	        	if (backwards) 
 			    { 
 			    	if (recArr[c] != null) movement(recArr[c], true, recAngle[c]); 
@@ -152,7 +163,12 @@ public class CustomThread extends Thread
         while(true) 
         {
         	tsProvider.fetchSample(tsSample, 0);
-        	if (tsSample[0] == 1) movement("ENTER", false, angle);
+        	if (tsSample[0] == 1) 
+        	{
+        		movement("DOWN", false, angle);
+        		Delay.msDelay(250);
+        		movement("ENTER", false, angle);
+        	}
     		// Entspricht der Input des Servers dem zuvoriegen, überspirnge
     		if (Integer.parseInt(Server.inputButton.split(";")[1]) <= counter) continue;
         	// Kann aus dem Server des EV3 ein neuer Input erkannt werden, wird dieser auf die Variable "button" übertragen
@@ -179,8 +195,10 @@ public class CustomThread extends Thread
         		break;
         	// Aufnahme löschen
         	case "DELETE":
-                recArr = new String[20];
-                recTime = new long[20];
+                recArr = new String[10];
+                recTime = new long[10];
+                recAngle = new int[10];
+                recVal = 0;
                 break;
             // Aufnahme starten
         	case "REC":
