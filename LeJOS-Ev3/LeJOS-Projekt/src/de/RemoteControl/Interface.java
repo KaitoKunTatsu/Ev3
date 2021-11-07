@@ -24,6 +24,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import jdk.jfr.Recording;
+
 public class Interface implements ActionListener {
 	
 	private Socket client;
@@ -47,7 +49,7 @@ public class Interface implements ActionListener {
 	JTextArea filler = new JTextArea();
 	
 	JLabel status = new JLabel("Status: unconnected");
-	JLabel angleTxt = new JLabel("Rotate Angle");
+	JLabel angleTxt = new JLabel("Rotate Angle:");
 	JTextField ip_field = new JTextField("192.168.0.131",20);
 	JTextField angle_field = new JTextField("90", 20);
 	
@@ -69,6 +71,7 @@ public class Interface implements ActionListener {
 	int curV = 0;
 	String curB = "0";
 	boolean connect_window;
+	boolean recording;
 	
 	public Interface() 
 	{
@@ -183,7 +186,6 @@ public class Interface implements ActionListener {
 		b_sRec.setBackground(background);
 		connect.setBackground(background);
 		b_esc.setBackground(background);
-		
 		conWindow.setBackground(panelBack);
 		panel.setBackground(panelBack);
 	}
@@ -195,7 +197,7 @@ public class Interface implements ActionListener {
 				System.exit(0);
 			}
 			// Verlinkt zu den Githubs der Autoren
-			else if (e.getSource() == about) 
+			else if (e.getSource() == about)
 			{
 				Desktop desk = java.awt.Desktop.getDesktop();
 				try {
@@ -216,12 +218,14 @@ public class Interface implements ActionListener {
 			{
 				changeColor(Color.lightGray, Color.DARK_GRAY);
 				status.setForeground(Color.WHITE);
+				angleTxt.setForeground(Color.WHITE);
 				return;
 			}
 			if (e.getSource() == lightmode) 
 			{
 				changeColor(Color.ORANGE, Color.WHITE);
 				status.setForeground(Color.black);
+				angleTxt.setForeground(Color.BLACK);
 				return;
 			}
 
@@ -275,6 +279,12 @@ public class Interface implements ActionListener {
 					else if (e.getSource() == b_record) 
 					{
 						curB = "REC";
+						if (!recording) 
+						{
+							recording = true;
+							b_record.setBackground(Color.GREEN);
+							panel.updateUI();
+						}
 					}
 					else if (e.getSource() == b_p1) 
 					{
@@ -291,6 +301,12 @@ public class Interface implements ActionListener {
 					else if (e.getSource() == b_sRec) 
 					{
 						curB = "STOPREC";
+						if (recording) 
+						{
+							recording = false;
+							b_record.setBackground(Color.RED);
+							panel.updateUI();
+						}
 					}
 				}
 				
