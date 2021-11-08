@@ -34,10 +34,16 @@ public class CustomThread extends Thread
     long[] recTime = new long[10];
     int[] recAngle = new int[10];
     
-    // Methode zur Rotation in entgegengesetzte Richtung zum Ã¼bergebenen Motor
+    /**
+     * 	Methode zur Rotation des EV3, indem sich nur einer der Motoren dreht
+     * 
+     * 	@param angle	Rotationswinkel für Drehungen
+     * 	@param back		Wird auf diese Methode im Zuge des rückwärts-Abspielens zugegriffen
+     *	@param motor	Der Motor, der der Blickrichtung des EV3 nach der Drehung entgegen liegt und zur Rotation bewegt wird
+     * */
     public void rotate(RegulatedMotor motor, boolean back, int angle) 
     {
-    	// Start des Ã¼bergebenen Motors
+    	// Start des übergebenen Motors
     	motor.setSpeed(340);
     	if (!back) { motor.forward(); }
     	else { motor.backward(); }
@@ -61,9 +67,20 @@ public class CustomThread extends Thread
         motor.stop(false);
     }
     
-    
-    // Methode zum ausfÃ¼hren von Bewegungen
-    // move: String = auszufÃ¼hrende Aktion als Text
+
+    /**
+     * 	Diese Methode regelt reine Bewegung des Roboters in Abhängigkeit der Inputs.
+     *
+     * 	- 	geradeaus fahren
+     * 	- 	rückwärts fahren
+     * 	- 	links Drehung
+     * 	- 	rechts Drehung
+     * 	- 	anhalten
+     * 
+     * 	@param back		Wird auf diese Methode im Zuge des rückwärts-Abspielens zugegriffen
+     * 	@param move		Befehl für die auszuführende Bewegung in Textform
+     * 	@param angle	Rotationswinkel für Drehungen
+     * */
     private void movement(String move, boolean back, int angle) 
     {
         switch(move) 
@@ -98,7 +115,7 @@ public class CustomThread extends Thread
             motorA.forward();
             motorB.forward();
             break;
-        // rÃ¼ckwÃ¤rts fahren
+        // rückwärts fahren
         case "DOWN":
         	if (back) 
         	{
@@ -117,9 +134,13 @@ public class CustomThread extends Thread
             break;
         }
     }
-    
-    // Methode zum abspielen des aufgenommenen Arrays (movement pattern)
-    // backwards: boolean = Soll das pattern erneut abgespielt oder zurÃ¼ck gefahren werden?
+
+    /**
+     * 	Der Methodenaufruf spielt das aufgenommene Array ab, respektive bewegt den EV3 erneut wie zwischen Start und Ende der Aufnahme.
+     * 	Ist backwards true, wird zum Anfangspunkt zurück navigiert
+     * 
+     * 	@param backwards
+     * */
     private void play(boolean backwards) 
     {
 		int c;
@@ -157,11 +178,11 @@ public class CustomThread extends Thread
 		recording = false;
     }
 
-    // Main des Threads
     public void run()
     {
         while(true) 
         {
+        	// Ist der TouchSensor ausgelöst, kurz zurück fahre, dann anhalten
         	tsProvider.fetchSample(tsSample, 0);
         	if (tsSample[0] == 1) 
         	{
@@ -169,9 +190,9 @@ public class CustomThread extends Thread
         		Delay.msDelay(250);
         		movement("ENTER", false, angle);
         	}
-    		// Entspricht der Input des Servers dem zuvoriegen, Ã¼berspirnge
+    		// Entspricht der Input des Servers dem zuvoriegen, überspirnge
     		if (Integer.parseInt(Server.inputButton.split(";")[1]) <= counter) continue;
-        	// Kann aus dem Server des EV3 ein neuer Input erkannt werden, wird dieser auf die Variable "button" Ã¼bertragen
+        	// Kann aus dem Server des EV3 ein neuer Input erkannt werden, wird dieser auf die Variable "button" übertragen
         	else 
         	{
         		angle = Integer.parseInt(Server.inputButton.split(";")[2]);
@@ -180,7 +201,7 @@ public class CustomThread extends Thread
         	}
         	System.out.println(Server.inputButton);
             
-        	// Reaktion auf den Ã¼bergebenen Button
+        	// Reaktion auf den übergebenen Button
     		switch(button) 
         	{
     		case "":
@@ -193,7 +214,7 @@ public class CustomThread extends Thread
         	case "ESCAPE":
         		System.exit(0);
         		break;
-        	// Aufnahme lÃ¶schen
+        	// Aufnahme löschen
         	case "DELETE":
                 recArr = new String[10];
                 recTime = new long[10];
@@ -204,7 +225,7 @@ public class CustomThread extends Thread
         	case "REC":
         		recording = true;
         		break;
-        	// Aufnahme rÃ¼ckwÃ¤rts abspielen
+        	// Aufnahme rückwärts abspielen
         	case "PLAY2":
         		play(true);
         		break;
@@ -232,7 +253,7 @@ public class CustomThread extends Thread
             		recVal++;
                     System.out.println(button + " recorded");
     			}
-    			// Bewegung ausfÃ¼hren
+    			// Bewegung ausführen
         		movement(button, false, angle);
         	}
         }

@@ -36,11 +36,11 @@ public class Interface implements ActionListener {
 	JFrame frame = new JFrame("Remote Control");
 	JButton b_p1 = new JButton("▶️");
 	JButton b_p2 = new JButton("↺"); 
-	JButton b_enter = new JButton("✖"); 
-	JButton b_up = new JButton("↑"); 
-	JButton b_down = new JButton("↓"); 
-	JButton b_right = new JButton("→"); 
-	JButton b_left = new JButton("←"); 
+	JButton b_enter = new JButton("♦"); 
+	JButton b_up = new JButton("⇑"); 
+	JButton b_down = new JButton("⇓"); 
+	JButton b_right = new JButton("⇒"); 
+	JButton b_left = new JButton("⇐"); 
 	JButton b_record = new JButton("⏺️");
 	JButton b_esc = new JButton("Escape");	
 	JButton connect = new JButton("Connect");
@@ -101,9 +101,12 @@ public class Interface implements ActionListener {
 		bar.add(help);
 		frame.setJMenuBar(bar);
 		
+		// Layouts
 		panel.setLayout(new GridLayout(6,3,10, 10));
 		conWindow.setLayout(new GridLayout(6,3,10, 10));
-		// buttons zum panel hinzufügen
+		
+		
+		// Buttons zum panel hinzufügen
 		conWindow.add(connect);
 		conWindow.add(ip_field);
 		conWindow.add(status);
@@ -128,7 +131,7 @@ public class Interface implements ActionListener {
 		panel.add(b_delete);
 		panel.add(b_esc);
 		
-		// Größe der buttons 
+		// Größe der Buttons und Schriftart
 		b_p1.setPreferredSize(new Dimension(50,60));
 		b_p1.setFont(font);
 		b_p2.setFont(font);
@@ -143,12 +146,11 @@ public class Interface implements ActionListener {
 		b_up.setFont(font);
 		connect.setFont(font);
 		status.setFont(font);
-		angle_field.setFont(font);
 		angleTxt.setFont(font);
 		
 		changeColor(Color.ORANGE, Color.WHITE);
 		
-		// Druck der buttons auf override der Klasse verweisen 
+		// Bei Druck eines Buttons auf Override der Klasse verweisen 
 		b_p1.addActionListener(this);
 		b_p2.addActionListener(this);
 		b_left.addActionListener(this);
@@ -310,7 +312,7 @@ public class Interface implements ActionListener {
 					}
 				}
 				
-			// Ist "connect" gedrückt und der EV3 NICHT verbunden, wird dieser verbunden und der outputstream initalisiert
+			// Ist connect gedrückt und der EV3 NICHT verbunden, wird dieser verbunden und der Outputstream initalisiert
 			if (e.getSource() == connect && client == null) 
 			{
 				client = new Socket(ip_field.getText(), 1415);
@@ -326,7 +328,7 @@ public class Interface implements ActionListener {
 			// Sonst eine Fehlermeldung werfen
 			catch(Exception exx) 
 			{
-				JOptionPane.showMessageDialog(frame, "Can not convert angel to int. Please fix your input", "Input Error", JOptionPane.ERROR_MESSAGE); 	
+				JOptionPane.showMessageDialog(frame, "Can not convert angle to int. Please fix your input", "Input Error", JOptionPane.ERROR_MESSAGE); 	
 				return;
 			}
 			// String zum EV3 übertragen, welcher den Input, Zähler an Knopfdrücken und die Gradzahl überträgt
@@ -336,7 +338,7 @@ public class Interface implements ActionListener {
 			// Fehler beim übertragen als Fehlermeldung werfen
 			catch(Exception ex) 
 			{ 
-				JOptionPane.showMessageDialog(frame, "Connection lost", "Connection Error", JOptionPane.ERROR_MESSAGE); 
+				JOptionPane.showMessageDialog(frame, "No connection", "Connection Error", JOptionPane.ERROR_MESSAGE); 
 			}
 		}
 	
