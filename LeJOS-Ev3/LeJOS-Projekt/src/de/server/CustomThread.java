@@ -8,7 +8,6 @@ import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
-import sun.management.Sensor;
 import de.KaitoLib.Utils.*;
 
 public class CustomThread extends Thread
@@ -18,24 +17,25 @@ public class CustomThread extends Thread
 	
 	EV3LargeRegulatedMotor motorA = new EV3LargeRegulatedMotor(MotorPort.A);
     EV3LargeRegulatedMotor motorB = new EV3LargeRegulatedMotor(MotorPort.B);    
+    
     EV3TouchSensor ts = new EV3TouchSensor(SensorPort.S2);
     SampleProvider tsProvider = ts.getTouchMode();
     float[] tsSample = new float[1];
+    
     EV3GyroSensor gyro = new EV3GyroSensor(SensorPort.S1);
     SampleProvider gyroProvider = gyro.getAngleAndRateMode();
     float[] gyroSample = new float[gyroProvider.sampleSize()];
     float[] tempSample = new float[gyroProvider.sampleSize()];
     
-	int counter = 1, angle;
+	int counter = 1, angle, recVal;
 	String button;
 	boolean recording = false;
-    int recVal = 0;
     String[] recArr = new String[10];
     long[] recTime = new long[10];
     int[] recAngle = new int[10];
     
     /**
-     * 	Methode zur Rotation des EV3, indem sich nur einer der Motoren dreht
+     * 	Methode zur Rotation des EV3
      * 
      * 	@param angle	Rotationswinkel für Drehungen
      * 	@param back		Wird auf diese Methode im Zuge des rückwärts-Abspielens zugegriffen
@@ -52,7 +52,7 @@ public class CustomThread extends Thread
     	gyroProvider.fetchSample(gyroSample, 0);
     	gyroProvider.fetchSample(tempSample, 0);
     	// Wiederholung bis der Winkel des EV3 den Wert von "angle" von der Messung zuvor entfernt ist
-    	while ((tempSample[0] - gyroSample[0])*(tempSample[0] - gyroSample[0]) < (angle-3)*(angle-3)) 
+    	while ((tempSample[0] - gyroSample[0])*(tempSample[0] - gyroSample[0]) < (angle)*(angle)) 
     	{
         	tsProvider.fetchSample(tsSample, 0);
         	if (tsSample[0] == 1) 
@@ -67,6 +67,10 @@ public class CustomThread extends Thread
         motor.stop(false);
     }
     
+    public static void printDisplay(String str) 
+    {
+    	System.out.println(str);
+    }
 
     /**
      * 	Diese Methode regelt reine Bewegung des Roboters in Abhängigkeit der Inputs.
@@ -104,11 +108,8 @@ public class CustomThread extends Thread
         case "UP":
         	if (back) 
         	{
-        		motorA.setSpeed(340);
-                motorB.setSpeed(340);
-                motorA.backward();
-                motorB.backward();
-        		break;
+        		movement("DOWN",false,angle);
+        		return;
         	}
             motorA.setSpeed(340);
             motorB.setSpeed(340);
@@ -119,11 +120,8 @@ public class CustomThread extends Thread
         case "DOWN":
         	if (back) 
         	{
-                motorA.setSpeed(340);
-                motorB.setSpeed(340);
-                motorA.forward();
-                motorB.forward();
-        		break;
+                movement("UP", false, angle);
+                return;
         	}
             motorA.setSpeed(340);
             motorB.setSpeed(340);
@@ -192,7 +190,7 @@ public class CustomThread extends Thread
         	}
     		// Entspricht der Input des Servers dem zuvoriegen, überspirnge
     		if (Integer.parseInt(Server.inputButton.split(";")[1]) <= counter) continue;
-        	// Kann aus dem Server des EV3 ein neuer Input erkannt werden, wird dieser auf die Variable "button" übertragen
+        	// Kann aus dem Server des EV3 ein neuer Input erkannt werden, wird der Befehl auf die Variable button übertragen und der Rotationswinkel auf angle
         	else 
         	{
         		angle = Integer.parseInt(Server.inputButton.split(";")[2]);
@@ -240,18 +238,15 @@ public class CustomThread extends Thread
     			{	
             		if (recVal > recArr.length-1) 
             		{
-            			arrUt.addElementToArray(recArr, button);
-            			arrUt.addElementToArray(recAngle, angle);
-            			arrUt.addElementToArray(recTime, System.currentTimeMillis());
+            			arrUt.addSpaceToArray(recArr, 4);
+            			arrUt.addSpaceToArray(recAngle, 4);
+            			arrUt.addSpaceToArray(recTime, 4);
             		}
-            		else 
-            		{
-            			recArr[recVal] = button;
-            			recAngle[recVal] = angle;
-                        recTime[recVal] = System.currentTimeMillis();
-            		}
-            		recVal++;
-                    System.out.println(button + " recorded");
+	        		recArr[recVal] = button;
+	        		recAngle[recVal] = angle;
+	                recTime[recVal] = System.currentTimeMillis();
+	        		recVal++;
+	                System.out.println(button + " recorded");
     			}
     			// Bewegung ausführen
         		movement(button, false, angle);

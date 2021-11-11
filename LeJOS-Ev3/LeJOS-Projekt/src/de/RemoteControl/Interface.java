@@ -24,8 +24,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import jdk.jfr.Recording;
-
 public class Interface implements ActionListener {
 	
 	private Socket client;
@@ -173,6 +171,12 @@ public class Interface implements ActionListener {
 		frame.pack();
 		
 	}
+	/**
+	 * 	Methode zum verändern des Erscheinungsbildes des Interface (farblich)
+	 * 
+	 * 	@param panelback	Farbe für den Hintergurnd des Interface
+	 * 	@param background	Farbe für den Hintergurnd der Knöpfe
+	 * */
 	private void changeColor(Color background, Color panelBack) 
 	{
 		panel.setBackground(background);
@@ -192,6 +196,18 @@ public class Interface implements ActionListener {
 		panel.setBackground(panelBack);
 	}
 	
+	private void recordHighlighting(Color color) 
+	{
+			recording = false;
+			b_record.setBackground(color);
+			panel.updateUI();
+	}
+	
+	/**
+	 * 	Diese Methode wird aufgerufen, sobald einer der Knöpfe des Interface gedrückt wird und reagiert entsprechend der Quelle auf die Aktion
+	 * 
+	 * 	@param e	
+	 * */
 	@Override
 	public void actionPerformed(ActionEvent e) {		
 			if (e.getSource() == exit) 
@@ -216,6 +232,8 @@ public class Interface implements ActionListener {
 				}
 				return;
 			}
+			
+			// 
 			if (e.getSource() == darkmode) 
 			{
 				changeColor(Color.lightGray, Color.DARK_GRAY);
@@ -281,20 +299,23 @@ public class Interface implements ActionListener {
 					else if (e.getSource() == b_record) 
 					{
 						curB = "REC";
-						if (!recording) 
-						{
-							recording = true;
-							b_record.setBackground(Color.GREEN);
-							panel.updateUI();
-						}
+						recording = true;
 					}
 					else if (e.getSource() == b_p1) 
 					{
 						curB = "PLAY1";
+						if (recording) 
+						{
+							recordHighlighting(Color.RED);
+						}
 					}	
 					else if (e.getSource() == b_p2) 
 					{
 						curB = "PLAY2";
+						if (recording) 
+						{
+							recordHighlighting(Color.RED);
+						}
 					}
 					else if (e.getSource() == b_delete) 
 					{
@@ -305,19 +326,26 @@ public class Interface implements ActionListener {
 						curB = "STOPREC";
 						if (recording) 
 						{
-							recording = false;
-							b_record.setBackground(Color.RED);
-							panel.updateUI();
+							recordHighlighting(Color.RED);
 						}
 					}
 				}
 				
 			// Ist connect gedrückt und der EV3 NICHT verbunden, wird dieser verbunden und der Outputstream initalisiert
-			if (e.getSource() == connect && client == null) 
+			if (e.getSource() == connect ) 
 			{
+				System.out.println("test0");
+				if (client == null || client.isClosed()) {
+				System.out.print("test1");
 				client = new Socket(ip_field.getText(), 1415);
 				status.setText("Status: connected");
 				output = new DataOutputStream(client.getOutputStream());
+				return;}
+				else 
+				{
+					System.out.print("test2");
+					client.close();
+				}
 				return;
 			}
 			// Kann die Eingabe für die Rotation zu int konvertiert werden, fortsetzen
