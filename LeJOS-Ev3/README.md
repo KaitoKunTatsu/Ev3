@@ -1,3 +1,0 @@
-# LeJOS-Ev3
-Blümchenwiese
-POWPOWPOWPOWPWOWPWOPWP
